@@ -1,5 +1,10 @@
+import java.io.IOException;
+import java.util.Collections;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
@@ -8,19 +13,25 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 
 /**
- * A reusable chat message containing text and an avatar.
+ * A dialog box containing a speaker's avatar and message.
  */
 public class DialogBox extends HBox {
-    public DialogBox(String message, Image image) {
-        Label text = new Label(message);
-        ImageView displayPicture = new ImageView(image);
+    @FXML
+    private Label dialog;
+    @FXML
+    private ImageView displayPicture;
 
-        text.setWrapText(true);
-        displayPicture.setFitWidth(100.0);
-        displayPicture.setFitHeight(100.0);
-        setAlignment(Pos.TOP_RIGHT);
-
-        getChildren().addAll(text, displayPicture);
+    private DialogBox(String text, Image image) {
+        try {
+            FXMLLoader loader = new FXMLLoader(MainWindow.class.getResource("/view/DialogBox.fxml"));
+            loader.setController(this);
+            loader.setRoot(this);
+            loader.load();
+        } catch (IOException exception) {
+            throw new IllegalStateException("Unable to load a dialog box", exception);
+        }
+        dialog.setText(text);
+        displayPicture.setImage(image);
     }
 
     /**
@@ -29,7 +40,7 @@ public class DialogBox extends HBox {
     private void flip() {
         setAlignment(Pos.TOP_LEFT);
         ObservableList<Node> children = FXCollections.observableArrayList(getChildren());
-        FXCollections.reverse(children);
+        Collections.reverse(children);
         getChildren().setAll(children);
     }
 
